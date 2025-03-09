@@ -1,37 +1,50 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
+
 
 public class AnagramSolver {
 
+
+
     private AnagramSolver() {};
 
-    /**
-     * Input: name of text file (containing English words).
-     * Output: a hashmap of lists of words that are anagrams.
-     * @param filename
-     * @return
-     */
     public static HashMap<String, ArrayList<String>> anagrams(String filename) {
-        return null;
+        HashMap<String, ArrayList<String>> anagramMap = new HashMap<>();
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            while (scanner.hasNext()) {
+                String word = scanner.next().trim();
+                String sortedWord = sortWord(word);
+                anagramMap.computeIfAbsent(sortedWord, k -> new ArrayList<>()).add(word);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + filename);
+            e.printStackTrace();
+        }
+        return anagramMap;
     }
 
-    /**
-     * Input: hashmap of lists of words that are anagrams.
-     * Output: largest list of words in hashmap that are anagrams.
-     * @param anagrams
-     * @return
-     */
     public static ArrayList<String> mostFrequentAnagram(HashMap<String, ArrayList<String>> anagrams) {
-        return null;
+        ArrayList<String> mostFrequent = new ArrayList<>();
+        for (ArrayList<String> list : anagrams.values()) {
+            if (list.size() > mostFrequent.size()) {
+                mostFrequent = list;
+            }
+        }
+        return mostFrequent;
     }
 
-    /**
-     * Input: hashmap of lists of words that are anagrams.
-     * Output: prints all key value pairs in the hashmap.
-     * @param anagrams
-     */
     public static void printKeyValuePairs(HashMap<String, ArrayList<String>> anagrams) {
-
+        for (String key : anagrams.keySet()) {
+            System.out.println(key + ": " + anagrams.get(key));
+        }
     }
 
+    private static String sortWord(String word) {
+        char[] chars = word.toCharArray();
+        java.util.Arrays.sort(chars);
+        return new String(chars);
+    }
 }
